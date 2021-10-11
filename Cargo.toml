@@ -4,15 +4,8 @@ version = "0.1.0"
 edition = "2018"
 description = "A simple http server"
 readme = "README.md"
-license = "GNU General Public License v3.0"
-license-file = "LICENSE"
 repository = "https://github.com/mattcoding4days/http-server"
-homepage = "https://github.com/mattcoding4days/http-server"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-
-[package.metadata.deb]
-maintainer = "Matt Williams matt@dmgblockchain.com"
-copyright = "2021 Matt williams"
