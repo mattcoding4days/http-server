@@ -1,5 +1,6 @@
 use super::method::Method;
 use super::parse_error::ParseError;
+use super::QueryString;
 use std::convert::TryFrom;
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::str;
@@ -10,9 +11,10 @@ use std::str;
  * problem that C/C++ have. The name 'buf' is made up. It is not
  * a built in keyword.
  * */
+#[derive(Debug)]
 pub struct Request<'buf> {
     m_path: &'buf str,
-    m_query_string: Option<&'buf str>,
+    m_query_string: Option<QueryString<'buf>>,
     m_method: Method,
 }
 
@@ -38,51 +40,27 @@ impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
         let (mut path, request) = Self::get_next_word(request).ok_or(ParseError::InvalidRequest)?;
         let (protocol, _) = Self::get_next_word(request).ok_or(ParseError::InvalidRequest)?;
 
-        dbg!("Local Method: {}", method);
-        dbg!("Local Path: {}", path);
-        dbg!("Local Protocol: {}", protocol);
-
         if protocol != "HTTP/1.1" {
             return Err(ParseError::InvalidProtocol);
         }
 
         let method: Method = method.parse()?;
 
-        let mut query_string: Option<&str> = None;
+        let mut query_string = None;
         /* use an if let statement instead of a regular Match,
          * as we don't care about the match arm where nothing is found
          * */
         if let Some(i) = path.find('?') {
             // grab everything after the '?'
-            query_string = Some(&path[i + 1..]);
+            query_string = Some(QueryString::from(&path[i + 1..]));
             // grab everything before the '?'
             path = &path[..i];
         }
-        
+
         Ok(Self {
             m_path: path,
             m_query_string: query_string,
             m_method: method,
         })
-    }
-}
-
-impl<'buf> Display for Request<'buf> {
-    fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        write!(
-            f,
-            "Path: {}\nQuery String: {:#?}\nMethod: {:#?}",
-            self.m_path, self.m_query_string, self.m_method
-        )
-    }
-}
-
-impl<'buf> Debug for Request<'buf> {
-    fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        write!(
-            f,
-            "Path: {}\nQuery String: {:#?}\nMethod: {:#?}",
-            self.m_path, self.m_query_string, self.m_method
-        )
     }
 }
