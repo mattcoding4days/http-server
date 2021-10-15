@@ -28,7 +28,7 @@ impl Server {
                 // try to convert 
                 match Request::try_from(&buffer[..]) {
                     Ok(req) => {
-                        println!("OK Request: {:?}", req);
+                        println!("{:#?}", req);
                     }
                     Err(error) => {
                         println!("Request failed: {}", error);

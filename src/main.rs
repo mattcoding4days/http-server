@@ -1,3 +1,6 @@
+#![allow(dead_code)]
+#![allow(unused_imports)]
+
 use http::Method;
 use http::Request;
 use server::Server;
