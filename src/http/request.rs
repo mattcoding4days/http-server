@@ -2,7 +2,7 @@ use super::method::Method;
 use super::parse_error::ParseError;
 use super::QueryString;
 use std::convert::TryFrom;
-use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
+use std::fmt::Debug;
 use std::str;
 
 /* Request is a generic lifetime object, lifetimes
@@ -19,6 +19,18 @@ pub struct Request<'buf> {
 }
 
 impl<'buf> Request<'buf> {
+    pub fn path(&self) -> &str {
+        &self.m_path
+    }
+
+    pub fn query_string(&self) -> Option<&QueryString<'buf>> {
+        self.m_query_string.as_ref()
+    }
+
+    pub fn method(&self) -> &Method {
+        &self.m_method
+    }
+
     fn get_next_word(request: &str) -> Option<(&str, &str)> {
         for (i, c) in request.chars().enumerate() {
             if c == ' ' || c == '\r' {
